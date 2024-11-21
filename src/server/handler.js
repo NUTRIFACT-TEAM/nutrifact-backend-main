@@ -40,6 +40,7 @@ async function postNewProductHandler(request, h) {
         }
 
         /** TODO: Panggil fungsi storeData untuk nyimpen ke cloud: ON-PROGRESS */
+        await storeData(barcodeId, newdata);
 
         const response = h.response({
             status: 201,
