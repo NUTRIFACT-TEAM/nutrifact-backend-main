@@ -1,0 +1,1 @@
+dengan menyebut nama Allah yang Maha Pengasih lagi Maha Penyayang.. Semoga 2 manusia skill issue ini bisa menyelesaikan project capstone dengan baik, dan mendapat banyak ilmu.. Aamiin

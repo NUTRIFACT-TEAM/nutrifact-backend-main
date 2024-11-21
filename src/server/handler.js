@@ -3,7 +3,6 @@ const crypto = require('crypto');
 const storeData = require('../services/storeData');
 const getDataFirestore = require('../services/getData');
 const InputError = require('../exceptions/InputError');
-// const { nanoid } = require('nanoid');
 const { nanoid } = require('nanoid');
 
 
