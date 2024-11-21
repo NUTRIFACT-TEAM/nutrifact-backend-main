@@ -3,48 +3,61 @@ const crypto = require('crypto');
 const storeData = require('../services/storeData');
 const getDataFirestore = require('../services/getData');
 const InputError = require('../exceptions/InputError');
+// const { nanoid } = require('nanoid');
+const { nanoid } = require('nanoid');
 
-const MAX_FILE_SIZE = 1000000; // 1MB
 
-async function postPredictHandler(request, h) {
-    const { image } = request.payload;
-    const { model } = request.server.app;
+async function postNewProductHandler(request, h) {
+    
+    /** TODO: disini ntar manggil request.payload image, juga request.server.app model */ 
+    
 
     try {
+        
+        /** TODO: disini ntar manggil var sugar, fat, dan healthGrade dari fungsi 
+         * inference Server dengan parameter model,image*/ 
 
-        const { label_final, suggestion } = await predictClassification(model, image);
+        const { merk, varian } = request.payload;
 
-        const id = crypto.randomUUID();
-        const createdAt = new Date().toISOString();
+        const newVarian = varian;
 
-        const data = {
-            "id": id,
-            "result": label_final,
-            "suggestion": suggestion,
-            "createdAt": createdAt
-        };
+        const barcodeId = nanoid(16);
+        
+        
+        /** FIXME: output merk dan varian tidak keluar pada body, find another alternative */
+        const newdata = {
+            barcodeId: barcodeId,
+            merk: merk,
+            varian: newVarian
 
-        await storeData(id, data);
+            /** TODO: disini ntar masukkin sugar, fat, healthGrade */
+        
+        }
+
+        /** TODO: Panggil fungsi storeData untuk nyimpen ke cloud: ON-PROGRESS */ 
 
         const response = h.response({
-            status: 'success',
-            message: 'Model is predicted successfully',
-            data
+            status: 201,
+            message: 'Product Added successfully!',
+            data: newdata
         });
         response.code(201);
         return response;
 
     } catch (error) {
-
         const response = h.response({
-            status: 'fail',
-            message: 'Terjadi kesalahan dalam melakukan prediksi'
+            status: response.code(400),
+            message: 'Failed to add product!'
         });
         response.code(400);
         return response;
     }
 }
 
+async function getProductbyScan(request, h) {
+    
+}
 
 
-module.exports = {postPredictHandler};
+
+module.exports = {postNewProductHandler};

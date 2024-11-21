@@ -1,5 +1,5 @@
-const { Firestore } = require('@google-cloud/firestore');
+// const { Firestore } = require('@google-cloud/firestore');
 
-async function getDataFirestore(id, data) {}
+// async function getDataFirestore(id, data) {}
 
-module.exports = getDataFirestore;
+// module.exports = getDataFirestore;
