@@ -4,7 +4,8 @@ const storeData = require('../services/storeData');
 const getDataFirestore = require('../services/getData');
 const InputError = require('../exceptions/InputError');
 const { nanoid } = require('nanoid');
-
+const fs = require('fs');
+const FormData = require('form-data');
 
 async function postNewProductHandler(request, h) {
 
@@ -16,14 +17,19 @@ async function postNewProductHandler(request, h) {
         /** TODO: disini ntar manggil var sugar, fat, dan healthGrade dari fungsi 
          * inferenceService dengan parameter model,image*/
 
+        const form = new FormData();
+        form.append('merk', request.payload.merk);
+        form.append('varian', request.payload.varian);
+        
+        /** TODO: parsing image untuk scan */
+        // form.append('image', fs.createReadStream(request.payload.image.path));
+
         const { merk, varian } = request.payload;
 
         const newVarian = varian;
 
         const barcodeId = nanoid(16);
 
-
-        /** FIXME: output merk dan varian tidak keluar pada body, find another alternative */
         const newdata = {
             barcodeId: barcodeId,
             merk: merk,

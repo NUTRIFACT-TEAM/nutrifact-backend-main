@@ -7,7 +7,9 @@ const routes = [
     handler: postNewProductHandler,
     options: {
       payload: {
-        parse: false,
+        parse: true,
+        multipart: true,
+        // output: 'data',
         allow: 'multipart/form-data'
       }
     },
