@@ -15,7 +15,7 @@ async function postNewProductHandler(request, h) {
     try {
 
         /** TODO: disini ntar manggil var sugar, fat, dan healthGrade dari fungsi 
-         * inference Server dengan parameter model,image*/
+         * inferenceService dengan parameter model,image*/
 
         const { merk, varian } = request.payload;
 
