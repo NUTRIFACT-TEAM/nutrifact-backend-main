@@ -1,4 +1,4 @@
-const { postPredictHandler, postNewProductHandler } = require('../server/handler');
+const { postNewProductHandler, getProductbyScanHandler } = require('../server/handler');
 
 const routes = [
   {
@@ -11,6 +11,12 @@ const routes = [
         allow: 'multipart/form-data'
       }
     },
+  },
+
+  {
+    path: '/products/{barcodeId}',
+    method: 'GET',
+    handler: getProductbyScanHandler
   }
 ]
 

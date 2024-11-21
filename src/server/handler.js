@@ -8,22 +8,22 @@ const { nanoid } = require('nanoid');
 
 
 async function postNewProductHandler(request, h) {
-    
-    /** TODO: disini ntar manggil request.payload image, juga request.server.app model */ 
-    
+
+    /** TODO: disini ntar manggil request.payload image, juga request.server.app model */
+
 
     try {
-        
+
         /** TODO: disini ntar manggil var sugar, fat, dan healthGrade dari fungsi 
-         * inference Server dengan parameter model,image*/ 
+         * inference Server dengan parameter model,image*/
 
         const { merk, varian } = request.payload;
 
         const newVarian = varian;
 
         const barcodeId = nanoid(16);
-        
-        
+
+
         /** FIXME: output merk dan varian tidak keluar pada body, find another alternative */
         const newdata = {
             barcodeId: barcodeId,
@@ -31,10 +31,10 @@ async function postNewProductHandler(request, h) {
             varian: newVarian
 
             /** TODO: disini ntar masukkin sugar, fat, healthGrade */
-        
+
         }
 
-        /** TODO: Panggil fungsi storeData untuk nyimpen ke cloud: ON-PROGRESS */ 
+        /** TODO: Panggil fungsi storeData untuk nyimpen ke cloud: ON-PROGRESS */
 
         const response = h.response({
             status: 201,
@@ -54,10 +54,41 @@ async function postNewProductHandler(request, h) {
     }
 }
 
-async function getProductbyScan(request, h) {
-    
+async function getProductbyScanHandler(request, h) {
+    const { barcodeId } = request.params; // Asumsikan ID dikirimkan sebagai parameter dalam URL
+
+    try {
+        const prediction = await getDataFirestore(barcodeId);
+
+        if (!prediction) {
+            const response = h.response({
+                status: 404,
+                message: 'Product tidak ditemukan'
+            });
+            response.code(404);
+            return response;
+        }
+
+        const response = h.response({
+            status: 'success',
+            data: prediction
+        });
+        response.code(200);
+        return response;
+        
+    } catch (error) {
+        console.error('Error fetching prediction history:', error);
+
+        const response = h.response({
+            status: 'fail',
+            message: 'Terjadi kesalahan dalam mengambil riwayat prediksi'
+        });
+        response.code(500);
+        return response;
+    }
 }
 
 
 
-module.exports = {postNewProductHandler};
+
+module.exports = { postNewProductHandler, getProductbyScanHandler};
