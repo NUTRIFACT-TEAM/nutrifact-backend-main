@@ -55,7 +55,7 @@ async function postNewProductHandler(request, h) {
 }
 
 async function getProductbyScanHandler(request, h) {
-    const { barcodeId } = request.params; // Asumsikan ID dikirimkan sebagai parameter dalam URL
+    const { barcodeId } = request.params;
 
     try {
         const prediction = await getDataFirestore(barcodeId);
