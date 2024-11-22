@@ -1,4 +1,4 @@
-const { postNewProductHandler, getProductbyScanHandler } = require('../server/handler');
+const { postNewProductHandler, getProductbyScanHandler } = require('../handler/grade/handler');
 
 const routes = [
   {
@@ -14,7 +14,6 @@ const routes = [
       }
     },
   },
-
   {
     path: '/products/{barcodeId}',
     method: 'GET',

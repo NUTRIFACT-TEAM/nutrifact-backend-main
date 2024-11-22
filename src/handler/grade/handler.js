@@ -1,8 +1,8 @@
-const predictClassification = require('../services/inferenceService');
+const predictClassification = require('../../model/inferenceService');
 const crypto = require('crypto');
-const storeData = require('../services/storeData');
-const getDataFirestore = require('../services/getData');
-const InputError = require('../exceptions/InputError');
+const storeData = require('../../services/storeData');
+const getDataFirestore = require('../../services/getData');
+const InputError = require('../../exceptions/InputError');
 const { nanoid } = require('nanoid');
 const fs = require('fs');
 const FormData = require('form-data');
