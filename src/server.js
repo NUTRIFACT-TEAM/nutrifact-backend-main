@@ -1,26 +1,23 @@
-// require('dotenv').config();
- 
+require('dotenv').config(); 
 const Hapi = require('@hapi/hapi');
-const routes = require('../server/routes');
+const routes = require('./routes');
 // const loadModel = require('../services/loadModel');
 // const InputError = require('../exceptions/InputError');
  
-(async () => {
+const init = async () => {
     const server = Hapi.server({
-        port: 8000,
-        host: 'localhost',
-        routes: {
-            cors: {
-              origin: ['*'],
-            },
+      port: process.env.PORT || 8080,
+      host: process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost',
+      routes: {
+        cors: {
+          origin: ['*'], // Mengaktifkan CORS untuk semua origin
         },
+      },
     });
  
     // const model = await loadModel();
     // server.app.model = model;
- 
-    server.route(routes);
- 
+
     // server.ext('onPreResponse', function (request, h) {
     //     const response = request.response;
     
@@ -53,7 +50,21 @@ const routes = require('../server/routes');
     //     return h.continue;
     // });
     
- 
-    await server.start();
-    console.log(`Server start at: ${server.info.uri}`);
-})();
+    server.route([
+        {
+          method: 'GET',
+          path: '/',
+          handler: () => ({ message: 'API is up and running!' }),
+        },
+      ]);
+    
+      await server.start();
+      console.log(`Server running at: ${server.info.uri}`);
+    };
+    
+    process.on('unhandledRejection', (err) => {
+      console.error('Unhandled Rejection:', err);
+      process.exit(1);
+    });
+    
+    init();
