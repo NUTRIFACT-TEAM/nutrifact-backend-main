@@ -82,7 +82,6 @@ const init = async () => {
   console.log(`Server running on ${server.info.uri}`);
 };
 
-// Tangani unhandled promise rejection
 process.on('unhandledRejection', (err) => {
   console.error('Unhandled Rejection:', err.message);
   process.exit(1);

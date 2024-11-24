@@ -1,5 +1,6 @@
 const loginHandler = require('./handler/auth/login');
 const registerHandler = require('./handler/auth/register');
+const getProfileHandler = require('./handler/auth/getProfile');
 
 const routes = [
 //   {
@@ -45,6 +46,11 @@ const routes = [
     method: 'POST',
     path: '/register',
     handler: registerHandler,
+  },
+  {
+    method: 'GET',
+    path: '/profile/{userId}',
+    handler: getProfileHandler,
   },
 ];
 

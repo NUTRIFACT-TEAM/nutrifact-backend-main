@@ -9,7 +9,7 @@ const registerHandler = async (request, h) => {
     const isRegistered = await User.findOne({ where: { email } });
 
     if (isRegistered) {
-      return h.response({ error: true, message: 'Email already registered' }).code(400);
+      return h.response({ status: 400, message: 'Email already exists', }).code(400);
     }
 
     const hashedPassword = bcrypt.hashSync(password, 10);
@@ -23,13 +23,20 @@ const registerHandler = async (request, h) => {
     });
 
     return h.response({
-      error: false,
-      message: 'User created',
-      id: newUser.id,
+      status: 201,
+      message: 'User registered successfully',
+      data: {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+      },
     }).code(201);
   } catch (error) {
     console.error(error);
-    return h.response({ error: true, message: 'Server error' }).code(500);
+    return h.response({
+      status: 500,
+      message: 'Server error',
+    }).code(500);
   }
 };
 
