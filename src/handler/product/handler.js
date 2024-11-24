@@ -4,59 +4,56 @@ const getDataFirestore = require('../../services/getData');
 const InputError = require('../../exceptions/InputError');
 const { nanoid } = require('nanoid');
 const FormData = require('form-data');
+const fs = require('fs');
+const path = require('path');
+const storeImage = require('../../services/storeImage');
 
 async function postNewProductHandler(request, h) {
-
-    /** TODO: disini ntar manggil request.payload image, juga request.server.app model */
-
-
     try {
-
         /** TODO: disini ntar manggil var sugar, fat, dan healthGrade dari fungsi 
          * inferenceService dengan parameter model,image*/
-
-        const form = new FormData();
-        form.append('merk', request.payload.merk);
-        form.append('varian', request.payload.varian);
-        
-        /** TODO: parsing image untuk scan */
-        // form.append('image', fs.createReadStream(request.payload.image.path));
-
-        const { merk, varian } = request.payload;
-
-        const newVarian = varian;
+        const { merk, varian, image, fat, healthGrade, sugar } = request.payload;
+        console.log('Received payload:', request.payload);
 
         const barcodeId = nanoid(16);
+        console.log('barcodeId:', barcodeId);
+
+        const imageName = await storeImage(barcodeId, image, image.hapi.filename);
 
         const newdata = {
             barcodeId: barcodeId,
             merk: merk,
-            varian: newVarian
+            varian: varian,
+            imageURL: `https://storage.googleapis.com/bucket-nutrifact/imageProduct/${imageName}`,
+            fat: fat,
+            healthGrade: healthGrade,
+            sugar: sugar
+             /** TODO: disini ntar masukkin sugar, fat, healthGrade dari model ML */
+        };
 
-            /** TODO: disini ntar masukkin sugar, fat, healthGrade */
-
-        }
-
-        /** TODO: Panggil fungsi storeData untuk nyimpen ke cloud: ON-PROGRESS */
         await storeData(barcodeId, newdata);
 
         const response = h.response({
-            status: 201,
-            message: 'Product Added successfully!',
+            status: 'success',
+            message: 'Product added successfully!',
             data: newdata
         });
         response.code(201);
         return response;
 
     } catch (error) {
+        console.error('Error in postNewProductHandler:', error);
         const response = h.response({
-            status: response.code(400),
-            message: 'Failed to add product!'
+            status: 400,
+            message: 'Failed to add product!',
+            error: error.message
         });
         response.code(400);
         return response;
     }
 }
+
+
 
 async function getProductbyScanHandler(request, h) {
     const { barcodeId } = request.params;
@@ -67,25 +64,25 @@ async function getProductbyScanHandler(request, h) {
         if (!prediction) {
             const response = h.response({
                 status: 404,
-                message: 'Product tidak ditemukan'
+                message: 'Product Not Found'
             });
             response.code(404);
             return response;
         }
 
         const response = h.response({
-            status: 'success',
+            status: 200,
             data: prediction
         });
         response.code(200);
         return response;
-        
+
     } catch (error) {
         console.error('Error fetching prediction history:', error);
 
         const response = h.response({
-            status: 'fail',
-            message: 'Terjadi kesalahan dalam mengambil riwayat prediksi'
+            status: 500,
+            message: 'ERROR Fetching Prediction History'
         });
         response.code(500);
         return response;
@@ -95,4 +92,4 @@ async function getProductbyScanHandler(request, h) {
 
 
 
-module.exports = { postNewProductHandler, getProductbyScanHandler};
+module.exports = { postNewProductHandler, getProductbyScanHandler };

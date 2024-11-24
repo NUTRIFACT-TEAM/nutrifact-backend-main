@@ -17,7 +17,8 @@ async function getDataFirestore(barcodeId) {
         healthGrade: doc.data().healthGrade,
         merk: doc.data().merk,
         sugar: doc.data().sugar,
-        varian: doc.data().varian
+        varian: doc.data().varian,
+        imageURL: doc.data().imageURL
     };
 
     return prediction;

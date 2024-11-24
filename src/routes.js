@@ -12,11 +12,14 @@ const routes = [
     handler: postNewProductHandler,
     options: {
       payload: {
+        allow: 'multipart/form-data',
+        output: 'stream',
         parse: true,
-        multipart: true,
-        // output: 'data',
-        allow: 'multipart/form-data'
-      }
+        maxBytes: 10000000,
+        multipart: {
+          output: 'stream'
+        }
+      },
     },
   },
   {
@@ -39,7 +42,7 @@ const routes = [
     path: '/profile',
     handler: getProfileHandler,
     options: {
-      auth: 'jwt', 
+      auth: 'jwt',
     }
   },
   {
