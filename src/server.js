@@ -4,6 +4,8 @@ const Jwt = require('@hapi/jwt');
 const sequelize = require('./config/database');
 const routes = require('./routes');
 const { validateToken } = require('./config/token');
+// const loadModel = require('../services/loadModel');
+// const InputError = require('../exceptions/InputError');
 
 const init = async () => {
   const server = Hapi.server({
@@ -13,6 +15,41 @@ const init = async () => {
       cors: { origin: ['*'] },
     },
   });
+
+// const model = await loadModel();
+  // server.app.model = model;
+
+  // server.ext('onPreResponse', function (request, h) {
+  //     const response = request.response;
+  
+  //     if (response instanceof InputError) {
+  //         const newResponse = h.response({
+  //             status: 'fail',
+  //             message: ${response.message} Silakan gunakan foto lain.
+  //         });
+  //         newResponse.code(response.statusCode);
+  //         return newResponse;
+  //     }
+  
+  //     if (response.isBoom) {
+  //         // Menangani kasus error dengan kode status tertentu
+  //         if (response.output.statusCode === 413) {
+  //             return h.response({
+  //                 status: 'fail',
+  //                 message: 'Payload content length greater than maximum allowed: 1000000'
+  //             }).code(413);
+  //         }
+  
+  //         const newResponse = h.response({
+  //             status: 'fail',
+  //             message: response.message
+  //         });
+  //         newResponse.code(response.output.statusCode);
+  //         return newResponse;
+  //     }
+  
+  //     return h.continue;
+  // });
 
   await server.register(Jwt);
 
