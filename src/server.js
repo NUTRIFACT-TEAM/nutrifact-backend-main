@@ -9,7 +9,7 @@ const { validateToken } = require('./config/token');
 
 const init = async () => {
   const server = Hapi.server({
-    port: process.env.PORT || 8080,
+    port: process.env.PORT || 3000,
     host: 'localhost', 
     routes: {
       cors: { origin: ['*'] },

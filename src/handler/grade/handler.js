@@ -1,5 +1,4 @@
-const predictClassification = require('../../model/inferenceService');
-const crypto = require('crypto');
+const predictClassification = require('../../model/healthGrade');
 const storeData = require('../../services/storeData');
 const getDataFirestore = require('../../services/getData');
 const InputError = require('../../exceptions/InputError');

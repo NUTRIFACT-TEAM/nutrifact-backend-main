@@ -1,3 +1,5 @@
+const { postNewProductHandler, getProductbyScanHandler } = require('./handler/grade/handler');
+
 const loginHandler = require('./handler/auth/login');
 const registerHandler = require('./handler/auth/register');
 const getProfileHandler = require('./handler/auth/getProfile');
@@ -21,22 +23,6 @@ const routes = [
 //     method: 'GET',
 //     handler: getProductbyScanHandler
 //   },
-//   {
-//     method: "GET",
-//     path: "/",
-//     handler: () => ({
-//       message: "API is up and running!",
-//     }),
-//   },
-
-//   {
-//     method: "GET",
-//     path: "/test-auth",
-//     handler: (request, h) => ({
-//       message: "Test route is working without JWT!",
-//     }),
-//   },
-
   {
     method: 'POST',
     path: '/login',
