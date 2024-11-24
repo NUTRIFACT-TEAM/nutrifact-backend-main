@@ -3,7 +3,6 @@ const storeData = require('../../services/storeData');
 const getDataFirestore = require('../../services/getData');
 const InputError = require('../../exceptions/InputError');
 const { nanoid } = require('nanoid');
-const fs = require('fs');
 const FormData = require('form-data');
 
 async function postNewProductHandler(request, h) {
