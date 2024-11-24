@@ -1,5 +1,5 @@
 const loginHandler = require('./handler/auth/login');
-const registerHandler = require("./handler/auth/register");
+const registerHandler = require('./handler/auth/register');
 
 const routes = [
 //   {
@@ -37,17 +37,15 @@ const routes = [
 //   },
 
   {
-    method: "POST",
-    path: "/register",
-    handler: registerHandler,
-  },
-
-  {
-    method: "POST",
-    path: "/login",
+    method: 'POST',
+    path: '/login',
     handler: loginHandler,
   },
-  
-]
+  {
+    method: 'POST',
+    path: '/register',
+    handler: registerHandler,
+  },
+];
 
 module.exports = routes;
