@@ -1,4 +1,4 @@
-require('dotenv').config({path: __dirname + '/../../.env'});
+require('dotenv').config({ path: __dirname + '/../../.env' });
 const Jwt = require('@hapi/jwt');
 
 const {
@@ -17,8 +17,8 @@ const generateToken = (user) => {
       user: user,
     },
     {
-      key: JWT_SECRET,
-      algorithm: JWT_ALGORITHM,
+      key:JWT_SECRET,
+      algorithm:JWT_ALGORITHM,
     },
     {
       ttlSec: 14400,
@@ -28,13 +28,34 @@ const generateToken = (user) => {
   return token;
 };
 
+// const validateToken = (artifacts, request, h) => {
+//   const isValid = artifacts.decoded.payload.aud === JWT_AUDIENCE;
+
+//   return {
+//     isValid,
+//     credentials: {user: artifacts.decoded.payload.user},
+//   };
+// };
+
+// config/token.js
 const validateToken = (artifacts, request, h) => {
   const isValid = artifacts.decoded.payload.aud === JWT_AUDIENCE;
 
+  // Check if 'sub' is present and valid
+  const sub = artifacts.decoded.payload.sub;
+  const isSubValid = !!sub;
+
+  if (!isSubValid) {
+    console.log('Token sub value is missing or invalid');
+    return { isValid: false };
+  }
+
   return {
     isValid,
-    credentials: {user: artifacts.decoded.payload.user},
+    credentials: { user: artifacts.decoded.payload.user },
   };
 };
 
-module.exports = {generateToken, validateToken};
+
+
+module.exports = { generateToken, validateToken };

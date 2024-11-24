@@ -59,12 +59,15 @@ const init = async () => {
     verify: {
       aud: process.env.JWT_AUDIENCE,
       iss: process.env.JWT_ISSUER,
-      sub: process.env.JWT_SUB,
+      sub: false,
     },
     validate: validateToken,
   };
 
-  server.auth.strategy('jwt_auth', 'jwt', jwtConfig);
+  
+  server.auth.strategy('jwt', 'jwt', jwtConfig);
+
+  // server.auth.default('jwt_auth'); INI kalo di uncomment, bakal error di /login
 
 
   server.route(routes);

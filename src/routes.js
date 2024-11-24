@@ -3,6 +3,7 @@ const { postNewProductHandler, getProductbyScanHandler } = require('./handler/pr
 const loginHandler = require('./handler/auth/login');
 const registerHandler = require('./handler/auth/register');
 const getProfileHandler = require('./handler/auth/getProfile');
+const updateProfileHandler = require('./handler/auth/update');
 
 const routes = [
   {
@@ -35,9 +36,20 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/profile/{userId}',
+    path: '/profile',
     handler: getProfileHandler,
+    options: {
+      auth: 'jwt', 
+    }
   },
+  {
+    method: 'PUT',
+    path: '/profile',
+    handler: updateProfileHandler,
+    options: {
+      auth: 'jwt',
+    }
+  }
 ];
 
 module.exports = routes;
