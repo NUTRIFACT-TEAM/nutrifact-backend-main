@@ -28,20 +28,10 @@ const generateToken = (user) => {
   return token;
 };
 
-// const validateToken = (artifacts, request, h) => {
-//   const isValid = artifacts.decoded.payload.aud === JWT_AUDIENCE;
 
-//   return {
-//     isValid,
-//     credentials: {user: artifacts.decoded.payload.user},
-//   };
-// };
-
-// config/token.js
 const validateToken = (artifacts, request, h) => {
   const isValid = artifacts.decoded.payload.aud === JWT_AUDIENCE;
 
-  // Check if 'sub' is present and valid
   const sub = artifacts.decoded.payload.sub;
   const isSubValid = !!sub;
 
