@@ -4,7 +4,7 @@ const fs = require('fs');
 
 const storage = new Storage();
 
-async function storeImage(barcodeId, fileStream, originalName) {
+async function storeImageProduct(barcodeId, fileStream, originalName) {
     try {
 
         const storage = new Storage();
@@ -44,4 +44,4 @@ async function storeImage(barcodeId, fileStream, originalName) {
     }
 }
 
-module.exports = storeImage;
+module.exports = storeImageProduct;
