@@ -35,7 +35,7 @@ async function storeImageProduct(barcodeId, fileStream, originalName) {
                 .on('error', reject);
         });
 
-        console.log(`${namaFile} telah diunggah ke ${process.env.BUCKET_NAME}/${bucketDestination}`);
+        console.log(`${namaFile} has been uploaded to ${process.env.BUCKET_NAME}/${bucketDestination}`);
 
         return namaFile;
     } catch (error) {
