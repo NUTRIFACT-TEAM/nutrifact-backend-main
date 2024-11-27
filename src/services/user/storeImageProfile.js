@@ -22,14 +22,18 @@ async function storeImageProfile(userId) {
 
         console.log(`${changedImage} has been uploaded to ${process.env.BUCKET_NAME}`);
     } catch (error) {
-        console.error('Error in storeImage:', error);
+        console.error('Error in store Image Profile:', error);
         throw error;
     }
 }
 
 // ini untuk updateProfile 
 async function updateImageProfile(userId) {
-    
+    try {
+        
+    } catch (error) {
+        console.error(`Error in update Image Profile:`, error)
+    }
 }
 
 module.exports = {storeImageProfile, updateImageProfile};

@@ -17,7 +17,7 @@ async function getImageProfile(userId) {
         }
     }
 
-    throw new Error(`Gambar profil untuk userId '${userId}' tidak ditemukan dalam format yang diizinkan.`);
+    throw new Error(`Profile Picture for '${userId}' not found in allowed formats.`);
 }
 
 
