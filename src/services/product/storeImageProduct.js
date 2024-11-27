@@ -18,7 +18,7 @@ async function storeImageProduct(barcodeId, fileStream, originalName) {
 
         console.log(`Uploading ${namaFile} to bucket ${process.env.BUCKET_NAME}`);
 
-        const bucketDestination = `imageProduct/${namaFile}`;
+        const bucketDestination = `${process.env.BUCKET_DESTINATION_PRODUCT}/${namaFile}`;
         const bucket = storage.bucket(process.env.BUCKET_NAME);
         const file = bucket.file(bucketDestination);
 
