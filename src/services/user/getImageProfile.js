@@ -20,6 +20,20 @@ async function getImageProfile(userId) {
     throw new Error(`Profile Picture for '${userId}' not found in allowed formats.`);
 }
 
+async function getImageProfileForUpdate(userId) {
+    for (const format of allowedImageFormats) {
+        const imageProfileURL = `${process.env.BUCKET_DESTINATION_PROFILE}/${userId}-image.${format}`;
+
+        const fileExists = await checkFileExists(userId, format);
+        if (fileExists) {
+            console.log(imageProfileURL);
+            return imageProfileURL; 
+        }
+    }
+
+    throw new Error(`Profile Picture for '${userId}' not found in allowed formats.`);
+
+}
 
 async function checkFileExists(userId, format) {
     const fileName = `${userId}-image.${format}`;
@@ -29,4 +43,4 @@ async function checkFileExists(userId, format) {
 }
 
 
-module.exports = {getImageProfile};
+module.exports = {getImageProfile, getImageProfileForUpdate};

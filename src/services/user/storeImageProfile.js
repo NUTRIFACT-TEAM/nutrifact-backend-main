@@ -1,6 +1,7 @@
 const { Storage } = require('@google-cloud/storage');
 const path = require('path');
 const fs = require('fs');
+const { getImageProfileForUpdate } = require('./getImageProfile');
 
 const storage = new Storage();
 
@@ -28,9 +29,45 @@ async function storeImageProfile(userId) {
 }
 
 // ini untuk updateProfile 
-async function updateImageProfile(userId) {
+async function updateImageProfile(userId, fileStream, originalName) {
     try {
         
+        const bucket = storage.bucket(process.env.BUCKET_NAME);
+
+        const latestImage = await getImageProfileForUpdate(userId);
+
+        await bucket.file(latestImage).delete();
+        console.log(`File ${latestImage} has been deleted!`);
+
+        
+        const extension = path.extname(originalName).toLowerCase();
+
+        if (extension !== '.jpeg' && extension !== '.jpg' && extension !== '.png') {
+            throw new Error('Hanya format JPEG dan PNG yang diizinkan.');
+        }
+
+        const updatedImageProfile = `${userId}-image${extension}`;
+
+        console.log(`Uploading ${updatedImageProfile} to bucket ${process.env.BUCKET_NAME}`);
+
+        const bucketDestination = `${process.env.BUCKET_DESTINATION_PROFILE}/${updatedImageProfile}`;
+        // const bucket = storage.bucket(process.env.BUCKET_NAME);
+        const file = bucket.file(bucketDestination);
+
+        await new Promise((resolve, reject) => {
+            const writeStream = file.createWriteStream({
+                metadata: {
+                    contentType: fileStream.hapi.headers['content-type'],
+                },
+                resumable: false,
+            });
+
+            fileStream.pipe(writeStream)
+                .on('finish', resolve)
+                .on('error', reject);
+        });
+
+        console.log(`${updatedImageProfile} has been uploaded to ${process.env.BUCKET_NAME}/${bucketDestination}`);
     } catch (error) {
         console.error(`Error in update Image Profile:`, error)
     }

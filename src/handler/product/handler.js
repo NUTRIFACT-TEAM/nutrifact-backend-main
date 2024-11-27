@@ -13,10 +13,8 @@ async function postNewProductHandler(request, h) {
         /** TODO: disini ntar manggil var sugar, fat, dan healthGrade dari fungsi 
          * inferenceService dengan parameter model,image*/
         const { merk, varian, image, fat, healthGrade, sugar } = request.payload;
-        console.log('Received payload:', request.payload);
 
         const barcodeId = nanoid(16);
-        console.log('barcodeId:', barcodeId);
 
         const imageName = await storeImageProduct(barcodeId, image, image.hapi.filename);
 
