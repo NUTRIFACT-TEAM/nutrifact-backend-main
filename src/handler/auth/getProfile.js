@@ -1,4 +1,5 @@
 const User = require('../../model/user');
+const { getImageProfile } = require('../../services/user/getImageProfile');
 
 const getProfileHandler = async (request, h) => {
   const userId = request.auth.credentials.user.id; 
@@ -13,6 +14,9 @@ const getProfileHandler = async (request, h) => {
       }).code(404);
     }
 
+    // await untuk nunggu dapet return
+    const imageProfileURL = await getImageProfile(user.id);
+
     return h.response({
       status: 200,
       message: 'User profile fetched successfully',
@@ -20,6 +24,7 @@ const getProfileHandler = async (request, h) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        imageProfileURL: imageProfileURL,
       },
     }).code(200);
   } catch (error) {

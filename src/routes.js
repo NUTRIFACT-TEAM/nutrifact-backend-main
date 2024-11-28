@@ -51,6 +51,15 @@ const routes = [
     handler: updateProfileHandler,
     options: {
       auth: 'jwt',
+      payload: {
+        allow: 'multipart/form-data',
+        output: 'stream',
+        parse: true,
+        maxBytes: 10000000,
+        multipart: {
+          output: 'stream'
+        }
+      },
     }
   }
 ];

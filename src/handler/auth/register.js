@@ -1,6 +1,7 @@
 const { nanoid } = require('nanoid');
 const bcrypt = require('bcrypt');
 const User = require('../../model/user');
+const { storeImageProfile } = require('../../services/user/storeImageProfile');
 
 const registerHandler = async (request, h) => {
   const { name, email, password } = request.payload;
@@ -21,6 +22,8 @@ const registerHandler = async (request, h) => {
       email,
       password: hashedPassword,
     });
+
+    storeImageProfile(newUser.id);
 
     return h.response({
       status: 201,

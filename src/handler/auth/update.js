@@ -1,11 +1,14 @@
 const bcrypt = require('bcrypt');
 const User = require('../../model/user');
+const { updateImageProfile } = require('../../services/user/storeImageProfile');
 
 const updateProfileHandler = async (request, h) => {
-  const { name, password } = request.payload;
+  const { name, password, image } = request.payload;
+
+  console.log('recieved payload: ', request.payload)
   const userId = request.auth.credentials.user.id; 
 
-  if (!name && !password) {
+  if (!name && !password && !image) {
     return h.response({
       status: 400,
       message: 'At least one field (name or password) is required',
@@ -14,6 +17,10 @@ const updateProfileHandler = async (request, h) => {
 
   try {
     const user = await User.findOne({ where: { id: userId } });
+    if (image) {
+      console.log(image.hapi.filename);
+      await updateImageProfile(userId, image, image.hapi.filename);
+    }
 
     if (!user) {
       return h.response({

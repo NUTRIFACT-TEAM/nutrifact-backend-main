@@ -4,7 +4,7 @@ const fs = require('fs');
 
 const storage = new Storage();
 
-async function storeImage(barcodeId, fileStream, originalName) {
+async function storeImageProduct(barcodeId, fileStream, originalName) {
     try {
 
         const storage = new Storage();
@@ -18,7 +18,7 @@ async function storeImage(barcodeId, fileStream, originalName) {
 
         console.log(`Uploading ${namaFile} to bucket ${process.env.BUCKET_NAME}`);
 
-        const bucketDestination = `imageProduct/${namaFile}`;
+        const bucketDestination = `${process.env.BUCKET_DESTINATION_PRODUCT}/${namaFile}`;
         const bucket = storage.bucket(process.env.BUCKET_NAME);
         const file = bucket.file(bucketDestination);
 
@@ -35,7 +35,7 @@ async function storeImage(barcodeId, fileStream, originalName) {
                 .on('error', reject);
         });
 
-        console.log(`${namaFile} telah diunggah ke ${process.env.BUCKET_NAME}/${bucketDestination}`);
+        console.log(`${namaFile} has been uploaded to ${process.env.BUCKET_NAME}/${bucketDestination}`);
 
         return namaFile;
     } catch (error) {
@@ -44,4 +44,4 @@ async function storeImage(barcodeId, fileStream, originalName) {
     }
 }
 
-module.exports = storeImage;
+module.exports = storeImageProduct;

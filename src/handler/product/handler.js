@@ -1,24 +1,22 @@
 const predictClassification = require('../../model/healthGrade');
-const storeData = require('../../services/storeData');
-const getDataFirestore = require('../../services/getData');
 const InputError = require('../../exceptions/InputError');
 const { nanoid } = require('nanoid');
 const FormData = require('form-data');
 const fs = require('fs');
 const path = require('path');
-const storeImage = require('../../services/storeImage');
+const storeImageProduct = require('../../services/product/storeImageProduct');
+const storeDataProduct = require('../../services/product/storeDataProduct');
+const getDataProduct = require('../../services/product/getDataProduct');
 
 async function postNewProductHandler(request, h) {
     try {
         /** TODO: disini ntar manggil var sugar, fat, dan healthGrade dari fungsi 
          * inferenceService dengan parameter model,image*/
         const { merk, varian, image, fat, healthGrade, sugar } = request.payload;
-        console.log('Received payload:', request.payload);
 
         const barcodeId = nanoid(16);
-        console.log('barcodeId:', barcodeId);
 
-        const imageName = await storeImage(barcodeId, image, image.hapi.filename);
+        const imageName = await storeImageProduct(barcodeId, image, image.hapi.filename);
 
         const newdata = {
             barcodeId: barcodeId,
@@ -31,7 +29,7 @@ async function postNewProductHandler(request, h) {
              /** TODO: disini ntar masukkin sugar, fat, healthGrade dari model ML */
         };
 
-        await storeData(barcodeId, newdata);
+        await storeDataProduct(barcodeId, newdata);
 
         const response = h.response({
             status: 'success',
@@ -59,7 +57,7 @@ async function getProductbyScanHandler(request, h) {
     const { barcodeId } = request.params;
 
     try {
-        const prediction = await getDataFirestore(barcodeId);
+        const prediction = await getDataProduct(barcodeId);
 
         if (!prediction) {
             const response = h.response({

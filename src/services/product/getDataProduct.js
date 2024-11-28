@@ -1,6 +1,6 @@
 const { Firestore } = require('@google-cloud/firestore');
 
-async function getDataFirestore(barcodeId) {
+async function getDataProduct(barcodeId) {
     const db = new Firestore();
 
     const predictDoc = db.collection('productNutri').doc(barcodeId);
@@ -24,4 +24,4 @@ async function getDataFirestore(barcodeId) {
     return prediction;
 }
 
-module.exports = getDataFirestore;
+module.exports = getDataProduct;
