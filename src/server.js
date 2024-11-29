@@ -1,7 +1,8 @@
 require('dotenv').config();
 const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
-const sequelize = require('./config/database');
+const { Firestore } = require('@google-cloud/firestore');
+const db = new Firestore();
 const routes = require('./routes');
 const { validateToken } = require('./config/token');
 // const loadModel = require('../services/loadModel');
@@ -38,13 +39,12 @@ const init = async () => {
   server.route(routes);
 
 
-  try {
-    await sequelize.sync({ alter: true });
-    console.log('Database connected and synchronized!');
-  } catch (error) {
-    console.error('Database connection failed:', error.message);
-    process.exit(1);
-  }
+try {
+  console.log('Firestore connected successfully!');
+} catch (error) {
+  console.error('Firestore connection failed:', error.message);
+  process.exit(1);
+}
 
   await server.start();
   console.log(`Server running on ${server.info.uri}`);
