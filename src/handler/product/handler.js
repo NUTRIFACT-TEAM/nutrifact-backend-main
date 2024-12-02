@@ -31,6 +31,20 @@ async function postNewProductHandler(request, h) {
 
         await storeDataProduct(barcodeId, newdata);
 
+        const usersCollection = db.collection('users');
+        const userDoc = await usersCollection.doc(userId).get();
+
+        if (!userDoc.exists) {
+            console.error('User not found:', userId);
+            return h.response({ status: 404, message: 'User not found' }).code(404);
+        }
+
+        const currentPoints = userDoc.data().points || 0;
+        console.log('Current Points:', currentPoints);
+
+        await usersCollection.doc(userId).update({ points: currentPoints + 5 });
+        console.log('Points updated successfully for user:', userId);
+
         const response = h.response({
             status: 'success',
             message: 'Product added successfully!',

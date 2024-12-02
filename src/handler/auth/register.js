@@ -23,6 +23,7 @@ const registerHandler = async (request, h) => {
       name,
       email,
       password: hashedPassword,
+      points: 0, //tambah variabel baru (points)
       createdAt: new Date().toISOString(),
     });
 
