@@ -4,6 +4,8 @@ const { nanoid } = require('nanoid');
 const FormData = require('form-data');
 const fs = require('fs');
 const path = require('path');
+const { Firestore } = require('@google-cloud/firestore'); 
+const db = new Firestore(); 
 const storeImageProduct = require('../../services/product/storeImageProduct');
 const storeDataProduct = require('../../services/product/storeDataProduct');
 const getDataProduct = require('../../services/product/getDataProduct');
@@ -12,6 +14,9 @@ async function postNewProductHandler(request, h) {
     try {
         /** TODO: disini ntar manggil var sugar, fat, dan healthGrade dari fungsi 
          * inferenceService dengan parameter model,image*/
+        const userId = request.auth.credentials?.user?.id;
+        console.log('User ID from token:', userId);
+
         const { merk, varian, image, fat, healthGrade, sugar } = request.payload;
 
         const barcodeId = nanoid(16);
@@ -31,17 +36,18 @@ async function postNewProductHandler(request, h) {
 
         await storeDataProduct(barcodeId, newdata);
 
+        //Penambahan points untuk users melaui userId(jwt)
         const usersCollection = db.collection('users');
         const userDoc = await usersCollection.doc(userId).get();
-
+    
         if (!userDoc.exists) {
-            console.error('User not found:', userId);
-            return h.response({ status: 404, message: 'User not found' }).code(404);
+          console.error('User not found:', userId);
+          return h.response({ status: 404, message: 'User not found' }).code(404);
         }
-
+    
         const currentPoints = userDoc.data().points || 0;
-        console.log('Current Points:', currentPoints);
-
+        console.log('Current points:', currentPoints);
+    
         await usersCollection.doc(userId).update({ points: currentPoints + 5 });
         console.log('Points updated successfully for user:', userId);
 

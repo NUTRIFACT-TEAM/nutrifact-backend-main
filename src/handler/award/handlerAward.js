@@ -4,6 +4,7 @@ const storeImageAward = require('../../services/award/storeImageAward');
 const storeAwardData = require('../../services/award/storeAwardData');
 const getAwardData = require('../../services/award/getAwardData');
 
+//Post Produk Award
 async function postNewAwardHandler(request, h) {
     const { name, description, image, pointsRequired } = request.payload;
 
@@ -37,6 +38,8 @@ async function postNewAwardHandler(request, h) {
     }
 }
 
+
+//List produl award yang tersedia
 async function getAllAwardsHandler(request, h) {
     try {
         const awards = await getAwardData();
@@ -54,6 +57,8 @@ async function getAllAwardsHandler(request, h) {
     }
 }
 
+
+//Proses redeem point untuk ditukar ke produk award
 const redeemAwardHandler = async (request, h) => {
     const { awardId } = request.payload;
     const userId = request.auth.credentials.user.id;
@@ -71,11 +76,25 @@ const redeemAwardHandler = async (request, h) => {
         const awardData = awardDoc.data();
 
         if (userData.points < awardData.pointsRequired) {
-            return h.response({ status: 400, message: 'Insufficient points' }).code(400);
+            return h.response({ status: 400, message: 'Your points are insufficient' }).code(400);
         }
 
+        // Update user's points
         await db.collection('users').doc(userId).update({
             points: userData.points - awardData.pointsRequired,
+        });
+
+        // Log redeem history
+        const redeemHistory = {
+            awardId,
+            awardName: awardData.name,
+            pointsRedeemed: awardData.pointsRequired,
+            redeemedAt: new Date().toISOString(),
+        };
+
+        await db.collection('redeemHistory').add({
+            userId,
+            ...redeemHistory,
         });
 
         return h.response({
@@ -91,4 +110,40 @@ const redeemAwardHandler = async (request, h) => {
     }
 };
 
-module.exports = { postNewAwardHandler, getAllAwardsHandler, redeemAwardHandler };
+// History redeem users
+const getRedeemHistoryHandler = async (request, h) => {
+    const userId = request.auth.credentials.user.id;
+    const db = new Firestore();
+
+    try {
+        const historySnapshot = await db
+            .collection('redeemHistory')
+            .where('userId', '==', userId)
+            .orderBy('redeemedAt', 'desc') // Sort by redemption date
+            .get();
+
+        if (historySnapshot.empty) {
+            return h.response({
+                status: 'success',
+                message: 'No redeem history found.',
+                data: [],
+            }).code(200);
+        }
+
+        const history = historySnapshot.docs.map(doc => doc.data());
+
+        return h.response({
+            status: 'success',
+            message: 'Redeem history found.',
+            data: history,
+        }).code(200);
+    } catch (error) {
+        console.error('Error fetching redeem history:', error);
+        return h.response({
+            status: 500,
+            message: 'Failed to fetch redeem history.',
+        }).code(500);
+    }
+};
+
+module.exports = { postNewAwardHandler, getAllAwardsHandler, redeemAwardHandler, getRedeemHistoryHandler  };

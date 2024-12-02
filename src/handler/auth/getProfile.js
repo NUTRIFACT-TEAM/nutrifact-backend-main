@@ -1,5 +1,5 @@
 const { Firestore } = require('@google-cloud/firestore');
-const { getImageProfile } = require('../../services/user/storeImageProfile');
+const { getImageProfile } = require('../../services/user/getImageProfile');
 
 const getProfileHandler = async (request, h) => {
   const userId = request.auth.credentials.user.id;
