@@ -1,5 +1,5 @@
 const { postNewProductHandler, getProductbyScanHandler } = require('./handler/product/handler');
-const { postNewAwardHandler, getAllAwardsHandler, redeemAwardHandler, getRedeemHistoryHandler } = require('./handler/award/handlerAward');
+const { getAllAwardsHandler, redeemAwardHandler, getRedeemHistoryHandler } = require('./handler/award/handlerAward');
 const loginHandler = require('./handler/auth/login');
 const registerHandler = require('./handler/auth/register');
 const getProfileHandler = require('./handler/auth/getProfile');
@@ -69,21 +69,6 @@ const routes = [
   },
 
   // Routes Award
-  {
-    method: 'POST',
-    path: '/awards',
-    handler: postNewAwardHandler,
-    options: {
-      auth: 'jwt', 
-      payload: {
-        allow: 'multipart/form-data',
-        output: 'stream',
-        parse: true,
-        maxBytes: 10000000,
-        multipart: { output: 'stream' },
-      },
-    },
-  },
   {
     method: 'GET',
     path: '/awards',

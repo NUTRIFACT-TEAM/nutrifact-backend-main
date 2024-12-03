@@ -1,43 +1,6 @@
 const { Firestore } = require('@google-cloud/firestore');
 const { nanoid } = require('nanoid');
-const storeImageAward = require('../../services/award/storeImageAward');
-const storeAwardData = require('../../services/award/storeAwardData');
 const getAwardData = require('../../services/award/getAwardData');
-
-//Post Produk Award
-async function postNewAwardHandler(request, h) {
-    const { name, description, image, pointsRequired } = request.payload;
-
-    try {
-        const awardId = nanoid(16);
-
-        const imageName = await storeImageAward(awardId, image, image.hapi.filename);
-
-        const awardData = {
-            awardId,
-            name,
-            description,
-            imageURL: `https://storage.googleapis.com/${process.env.BUCKET_NAME}/imageAward/${imageName}`,
-            pointsRequired,
-        };
-
-        await storeAwardData(awardId, awardData);
-
-        return h.response({
-            status: 'success',
-            message: 'Award added successfully!',
-            data: awardData,
-        }).code(201);
-    } catch (error) {
-        console.error('Error in postNewAwardHandler:', error);
-        return h.response({
-            status: 400,
-            message: 'Failed to add award!',
-            error: error.message,
-        }).code(400);
-    }
-}
-
 
 //List produl award yang tersedia
 async function getAllAwardsHandler(request, h) {
@@ -146,4 +109,4 @@ const getRedeemHistoryHandler = async (request, h) => {
     }
 };
 
-module.exports = { postNewAwardHandler, getAllAwardsHandler, redeemAwardHandler, getRedeemHistoryHandler  };
+module.exports = { getAllAwardsHandler, redeemAwardHandler, getRedeemHistoryHandler  };
