@@ -51,8 +51,10 @@ async function updateImageProfile(userId, fileStream, originalName) {
         console.log(`Uploading ${updatedImageProfile} to bucket ${process.env.BUCKET_NAME}`);
 
         const bucketDestination = `${process.env.BUCKET_DESTINATION_PROFILE}/${updatedImageProfile}`;
-        // const bucket = storage.bucket(process.env.BUCKET_NAME);
+        // // const bucket = storage.bucket(process.env.BUCKET_NAME);
         const file = bucket.file(bucketDestination);
+
+        
 
         await new Promise((resolve, reject) => {
             const writeStream = file.createWriteStream({
@@ -67,7 +69,7 @@ async function updateImageProfile(userId, fileStream, originalName) {
                 .on('error', reject);
         });
 
-        console.log(`${updatedImageProfile} has been uploaded to ${process.env.BUCKET_NAME}/${bucketDestination}`);
+        // console.log(`${updatedImageProfile} has been uploaded to ${process.env.BUCKET_NAME}/${bucketDestination}`);
     } catch (error) {
         console.error(`Error in update Image Profile:`, error)
     }
