@@ -15,3 +15,28 @@
 // const db = getFirestore(app);
 
 // module.exports = { db };  // Ganti export default dengan module.exports
+
+
+// const { Firestore } = require('@google-cloud/firestore');
+// const path = require('path');
+
+// let firestoreConfig = {};
+
+// if (process.env.NODE_ENV === 'production') {
+//     firestoreConfig = {};
+// } else {
+//     firestoreConfig = {
+//         projectId: 'nutrifact-capstone',  // Menambahkan project ID Anda
+//         keyFilename: path.resolve(__dirname, 'C:/javascript-projects/Capstone Project/nutrifact-capstone-0eb48587e311.json'),  // Path ke file JSON kredensial
+//     };
+// }
+
+// let db;
+// try {
+//     db = new Firestore(firestoreConfig);
+//     console.log('Firestore connected successfully');
+// } catch (error) {
+//     console.error('Error connecting to Firestore:', error);
+// }
+
+// module.exports = db;

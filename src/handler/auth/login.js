@@ -1,45 +1,43 @@
-const User = require('../../model/user');
+// const User = require('../../model/user');
+const { Firestore } = require('@google-cloud/firestore');
 const bcrypt = require('bcrypt');
 const { generateToken } = require('../../config/token');
 
 const loginHandler = async (request, h) => {
   const { email, password } = request.payload;
-
-  if (!email || !password) {
-    return h.response({ status: 400, message: 'Missing required data', }).code(400);
-  }
+  const db = new Firestore();
+  const usersCollection = db.collection('users');
 
   try {
-    const user = await User.findOne({ where: { email } });
-
-    if (!user) {
-      return h.response({ status: 401, message: 'User not found', }).code(401);
+    const userSnapshot = await usersCollection.where('email', '==', email).get();
+    if (userSnapshot.empty) {
+      return h.response({ status: 401, message: 'User not found' }).code(401);
     }
 
-    const isValid = await bcrypt.compare(password, user.password);
+    const userDoc = userSnapshot.docs[0];
+    const userData = userDoc.data();
+
+    const isValid = await bcrypt.compare(password, userData.password);
     if (!isValid) {
-      return h.response({ status: 401, message: 'Wrong password', }).code(401);
+      return h.response({ status: 401, message: 'Wrong password' }).code(401);
     }
 
-    const token = generateToken(user);
+    const token = generateToken(userData);
     return h.response({
       status: 200,
       message: 'Login successful',
       data: {
         token,
         user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
+          id: userData.id,
+          name: userData.name,
+          email: userData.email,
         },
       },
     }).code(200);
   } catch (error) {
     console.error(error);
-    return h.response({
-      status: 401,
-      message: 'Invalid credentials',
-    }).code(401);
+    return h.response({ status: 401, message: 'Invalid credentials' }).code(401);
   }
 };
 
