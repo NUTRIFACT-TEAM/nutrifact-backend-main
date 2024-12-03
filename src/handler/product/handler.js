@@ -1,4 +1,3 @@
-const predictClassification = require('../../model/healthGrade');
 const InputError = require('../../exceptions/InputError');
 const { nanoid } = require('nanoid');
 const FormData = require('form-data');
