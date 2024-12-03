@@ -25,6 +25,7 @@ const getProfileHandler = async (request, h) => {
         name: userData.name,
         email: userData.email,
         profileImageURL,
+        points: userData.points
       },
     }).code(200);
   } catch (error) {
