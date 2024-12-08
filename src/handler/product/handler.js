@@ -3,24 +3,44 @@ const { nanoid } = require('nanoid');
 const FormData = require('form-data');
 const fs = require('fs');
 const path = require('path');
-const { Firestore } = require('@google-cloud/firestore'); 
-const db = new Firestore(); 
+const axios = require('axios');
+const { Firestore } = require('@google-cloud/firestore');
+const db = new Firestore();
 const storeImageProduct = require('../../services/product/storeImageProduct');
 const storeDataProduct = require('../../services/product/storeDataProduct');
 const getDataProduct = require('../../services/product/getDataProduct');
 
+
+async function inferenceService(imageStream, barcodeId) {
+    try {
+        const form = new FormData();
+        form.append('imageNutri', imageStream, 'imageNutri.png');  
+        form.append('barcodeId', barcodeId);
+
+        const response = await axios.post('http://127.0.0.1:5000/predict', form, { 
+            headers: { ...form.getHeaders() }
+        });
+
+        return response.data; //mengebalikan objek respons Axios
+    } catch (error) {
+        console.error('Error sending image to Flask:', error);
+        throw error;
+    }
+}
+
 async function postNewProductHandler(request, h) {
     try {
-        /** TODO: disini ntar manggil var sugar, fat, dan healthGrade dari fungsi 
-         * inferenceService dengan parameter model,image*/
         const userId = request.auth.credentials?.user?.id;
         console.log('User ID from token:', userId);
 
-        const { merk, varian, image, fat, healthGrade, sugar } = request.payload;
+        const { merk, varian, image, imageNutri } = request.payload;
+        console.log(request.payload);
 
         const barcodeId = nanoid(16);
-
         const imageName = await storeImageProduct(barcodeId, image, image.hapi.filename);
+
+        // Panggil Flask service untuk mendapatkan fat, sugar, dan healthGrade
+        const { fat, sugar, healthGrade } = await inferenceService(imageNutri, barcodeId);
 
         const newdata = {
             barcodeId: barcodeId,
@@ -30,23 +50,22 @@ async function postNewProductHandler(request, h) {
             fat: fat,
             healthGrade: healthGrade,
             sugar: sugar
-             /** TODO: disini ntar masukkin sugar, fat, healthGrade dari model ML */
         };
 
         await storeDataProduct(barcodeId, newdata);
 
-        //Penambahan points untuk users melaui userId(jwt)
+        // Penambahan points untuk users melaui userId(jwt)
         const usersCollection = db.collection('users');
         const userDoc = await usersCollection.doc(userId).get();
-    
+
         if (!userDoc.exists) {
-          console.error('User not found:', userId);
-          return h.response({ status: 404, message: 'User not found' }).code(404);
+            console.error('User not found:', userId);
+            return h.response({ status: 404, message: 'User not found' }).code(404);
         }
-    
+
         const currentPoints = userDoc.data().points || 0;
         console.log('Current points:', currentPoints);
-    
+
         await usersCollection.doc(userId).update({ points: currentPoints + 5 });
         console.log('Points updated successfully for user:', userId);
 
@@ -69,7 +88,6 @@ async function postNewProductHandler(request, h) {
         return response;
     }
 }
-
 
 
 async function getProductbyScanHandler(request, h) {
