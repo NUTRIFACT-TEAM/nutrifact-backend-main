@@ -10,14 +10,13 @@ const storeImageProduct = require('../../services/product/storeImageProduct');
 const storeDataProduct = require('../../services/product/storeDataProduct');
 const getDataProduct = require('../../services/product/getDataProduct');
 
-
 async function inferenceService(imageStream, barcodeId) {
     try {
         const form = new FormData();
         form.append('imageNutri', imageStream, 'imageNutri.png');  
         form.append('barcodeId', barcodeId);
 
-        const response = await axios.post('http://127.0.0.1:5000/predict', form, { 
+        const response = await axios.post(process.env.endpointML, form, { 
             headers: { ...form.getHeaders() }
         });
 
@@ -33,10 +32,18 @@ async function postNewProductHandler(request, h) {
         const userId = request.auth.credentials?.user?.id;
         console.log('User ID from token:', userId);
 
-        const { merk, varian, image, imageNutri } = request.payload;
+        const { barcodeId, merk, varian, image, imageNutri } = request.payload;
         console.log(request.payload);
 
-        const barcodeId = nanoid(16);
+        if (!barcodeId && !merk && !image && !imageNutri) {
+            return h.response({
+              status: 400,
+              message: 'All Field is required',
+            }).code(400);
+          }
+
+        // barcode ID dari rafi
+        // const barcodeId = nanoid(16);
         const imageName = await storeImageProduct(barcodeId, image, image.hapi.filename);
 
         // Panggil Flask service untuk mendapatkan fat, sugar, dan healthGrade
@@ -46,7 +53,7 @@ async function postNewProductHandler(request, h) {
             barcodeId: barcodeId,
             merk: merk,
             varian: varian,
-            imageURL: `https://storage.googleapis.com/bucket-nutrifact/imageProduct/${imageName}`,
+            imageURL: `https://storage.googleapis.com/${process.env.BUCKET_NAME}/${process.env.BUCKET_DESTINATION_PRODUCT}/${imageName}`,
             fat: fat,
             healthGrade: healthGrade,
             sugar: sugar
