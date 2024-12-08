@@ -15,7 +15,20 @@ const updateProfileHandler = require('./handler/auth/update');
 
 // Define the application routes
 const routes = [
-
+  // Tambahkan route ini di bagian atas atau bawah array `routes`
+  {
+    /**
+     * Route untuk menampilkan pesan "Nutrifact-backend-main is running!".
+     * @method GET
+     * @path /
+     * @handler handler untuk menampilkan pesan
+     */
+    method: 'GET',
+    path: '/',
+    handler: (request, h) => {
+      return 'Nutrifact-backend-main is running!';
+    },
+  },
   // Routes for product management
   {
     /**
