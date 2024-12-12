@@ -6,7 +6,7 @@ This is the main backend service of Bangkit 2023 H2 capstone project: NUTRIFACT.
 1. [Team C242-PS378](#C242-PS378---cc)
 2. [Technology](#Technology)
 3. [Installation Steps](#InstallationSteps)
-4. [Full API endpoints list and documentation](#FullAPIendpointslistanddocumentationcanbeaccessedhere:)
+4. [Full API endpoints list and documentation](#FullAPIendpointslistanddocumentationcanbeaccessedhere)
 
 ## C242-PS378 - CC
 
