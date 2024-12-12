@@ -27,12 +27,29 @@ async function inferenceService(imageStream, barcodeId) {
             headers: { ...form.getHeaders() }
         });
 
+        // Check if the response contains the expected nutritional data
+        if (!response.data || !response.data.fat || !response.data.sugar || !response.data.healthGrade) {
+            // If missing nutritional data, throw an error
+            throw new Error('Nutritional data not detected or incomplete.');
+        }
+
         // Return the response data from the machine learning service
         return response.data;
     } catch (error) {
         // Log error if sending request fails
-        console.error('Error sending image to Flask:', error);
-        throw error; // Rethrow error for further handling
+        console.error('Error sending image to machine learning service:', error);
+        
+        // Handle specific cases when inference fails
+        if (error.response) {
+            // Server returned a response with error status
+            throw new Error(`Inference service failed: ${error.response.data.message || 'Unknown error'}`);
+        } else if (error.request) {
+            // No response from server
+            throw new Error('Inference service did not respond.');
+        } else {
+            // Other errors
+            throw new Error(`Error in inference service: ${error.message}`);
+        }
     }
 }
 
@@ -52,29 +69,31 @@ async function postNewProductHandler(request, h) {
         console.log('User ID from token:', userId);
 
         // Destructure product details from request payload
-        const { barcodeId, merk, varian, image, imageNutri } = request.payload;
-        console.log(request.payload);
+        const { barcodeId, merk, varian, imageNutri } = request.payload;
+        // const { fat, sugar, healthGrade } = await inferenceService(imageNutri, barcodeId);
 
-        // Validate required fields
-        if (!barcodeId || !merk || !image || !imageNutri) {
+        // Call inference service to get nutritional data
+        let fat, sugar, healthGrade;
+        try {
+            const inferenceData = await inferenceService(imageNutri, barcodeId);
+            fat = inferenceData.fat;
+            sugar = inferenceData.sugar;
+            healthGrade = inferenceData.healthGrade;
+        } catch (inferenceError) {
+            // If inference service fails, respond with an error message
             return h.response({
-              status: 400,
-              message: 'All Field is required', // Missing fields in the request
+                status: 'error',
+                message: 'Failed to retrieve nutritional data.',
+                error: inferenceError.message
             }).code(400);
         }
-
-        // Store product image in the cloud storage
-        const imageName = await storeImageProduct(barcodeId, image, image.hapi.filename);
-
-        // Call the inference service to retrieve nutritional data (fat, sugar, healthGrade)
-        const { fat, sugar, healthGrade } = await inferenceService(imageNutri, barcodeId);
 
         // Prepare the new product data object
         const newdata = {
             barcodeId: barcodeId,
             merk: merk,
             varian: varian,
-            imageURL: `https://storage.googleapis.com/${process.env.BUCKET_NAME}/${process.env.BUCKET_DESTINATION_PRODUCT}/${imageName}`,
+            // imageURL: `https://storage.googleapis.com/${process.env.BUCKET_NAME}/${process.env.BUCKET_DESTINATION_PRODUCT}/${imageName}`,
             fat: fat,
             healthGrade: healthGrade,
             sugar: sugar
