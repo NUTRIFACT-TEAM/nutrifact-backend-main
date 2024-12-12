@@ -11,7 +11,7 @@ npm install
 ```  
 
 
-### Full API endpoints list and documentation can be accessed here: [NUTRIFACT API Documentation]([https://documenter.getpostman.com/view/22683860/2s9YkraKX7](https://docs.google.com/document/d/1aKdYcVrCo2xBdju2tz53mcMDVIKDKABkL18G7khfXVk/edit?usp=sharing))
+### Full API endpoints list and documentation can be accessed here: [NUTRIFACT API Documentation](https://docs.google.com/document/d/1aKdYcVrCo2xBdju2tz53mcMDVIKDKABkL18G7khfXVk/edit?usp=sharing]
 
 ## Built with
 - Hapi 21.3.12
